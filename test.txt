@@ -1,0 +1,10 @@
+Test file
+line 2
+line 3
+Line with accented characters: éèçà test
+Line with trailing space 
+Line with 5 trailing spaces     
+A long line Test1 test2 test3 test4 test5 test6 test7 test8 test9 test10 test11 test12 test13 test14
+Next line has 2 spaces
+  
+Next line is empty

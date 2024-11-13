@@ -1,0 +1,10 @@
+name = "file_read"
+version = "0.1.0"
+license = "MIT"
+author = "Gunther Willems"
+
+[build]
+auto-executables = true
+auto-tests = false
+auto-examples = false
+module-naming = false
