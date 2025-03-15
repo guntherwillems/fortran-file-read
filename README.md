@@ -1,37 +1,35 @@
 # Fortran, read a text file without losing trailing spaces
 
-When reading a file line by line and using a character array with fixed length (len attribute) to store it, trailing spaces will be added to fill the character string.  
+When reading a file, line by line, and using a character array with fixed length (len attribute) to store it, trailing spaces will be added to fill the character string.  
 Setting string "Test" into type character(10) would result in "Test&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 
 If the file has text lines with spaces at the end, they will be lost. HTML, json, ... files could have spaces at the end of a line that you don't want to lose.
 
-This code will not lose the trailing spaces:
+This code will not lose the trailing spaces. It uses the 'size' parameter in combination with 'advance="no"' from the 'read' statement. 'size' is the number of characters read. Afterwards the read character sting is sliced for 'size' characters with buffer(:line_size).
 
 ~~~fortran
-   integer, parameter :: buffer_size = 512
-   character(*), parameter :: filename = "test.txt"
-   integer :: io, stat, line_size
-   character(buffer_size) :: msg ! Error message
-   ! Will add trailing spaces when a shorter character string is set
-   character(buffer_size) :: buffer
-   ! Deferred character string to store text without added trailing spaces.
-   character(:), allocatable :: line
+implicit none
 
-   open(newunit=io, file=filename, status="old", action="read", iostat=stat, iomsg=msg)
-   if (stat /= 0) then ! Error number. If the file doesn't exist.
-      print *, trim(msg)
-      return
-   end if
+integer, parameter :: buffer_size = 512
+character(*), parameter :: filename = "test.txt"
+integer :: io, stat, line_size
+character(buffer_size) :: msg ! Error message
+character(buffer_size) :: buffer ! Will add trailing spaces when a shorter character string is set
+character(:), allocatable :: line ! The character string that is read, without added trailing spaces
 
-   do
-      read(unit=io, fmt='(a)', iostat=stat, advance='no', size=line_size) buffer
-      ! line_size is the number of characters transferred.
-      line = buffer(:line_size)
-      print *, ">" // line // "<"
-      if (IS_IOSTAT_END(stat)) exit ! End of file
-   end do
+open(newunit=io, file=filename, status="old", action="read", iostat=stat, iomsg=msg)
+if (stat /= 0) then ! Error number
+   error stop trim(msg)
+end if
 
-   close(io)
+do
+   read(unit=io, fmt="(a)", iostat=stat, advance="no", size=line_size) buffer
+   line = buffer(:line_size)
+   print *, ">" // line // "<"
+   if (IS_IOSTAT_END(stat)) exit ! End of file
+end do
+
+close(io)
 ~~~
 
 The repository has a working example: app/main.f90

@@ -2,7 +2,7 @@
 ! Started 11/2024
 ! License: MIT
 
-! Read a text file without losing the trailing spaces in the text.
+!> Read a text file without losing the trailing spaces
 program file_read
    implicit none
 
@@ -15,12 +15,11 @@ program file_read
 
    open(newunit=io, file=filename, status="old", action="read", iostat=stat, iomsg=msg)
    if (stat /= 0) then ! Error number
-      print *, trim(msg)
-      return
+      error stop trim(msg)
    end if
 
    do
-      read(unit=io, fmt='(a)', iostat=stat, advance='no', size=line_size) buffer
+      read(unit=io, fmt="(a)", iostat=stat, advance="no", size=line_size) buffer
       line = buffer(:line_size)
       print *, ">" // line // "<"
       if (IS_IOSTAT_END(stat)) exit ! End of file
